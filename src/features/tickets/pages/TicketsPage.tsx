@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Plus, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -19,7 +19,28 @@ export const TicketsPage = () => {
     search: '',
   })
 
-  const { data, isLoading } = useTickets(filters)
+  // Fetch tickets from API (without search parameter)
+  const { data, isLoading } = useTickets({
+    status: filters.status,
+    priority: filters.priority,
+  })
+
+  // Filter tickets client-side based on search term
+  const filteredTickets = useMemo(() => {
+    if (!data?.data) return []
+
+    const tickets = data.data
+    const searchTerm = filters.search?.toLowerCase().trim()
+
+    if (!searchTerm) return tickets
+
+    return tickets.filter((ticket) =>
+      ticket.title.toLowerCase().includes(searchTerm) ||
+      ticket.description.toLowerCase().includes(searchTerm) ||
+      ticket.id.toLowerCase().includes(searchTerm)
+    )
+  }, [data?.data, filters.search])
+
 
   const handleFilterChange = (key: keyof TicketFilters, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }))
@@ -79,9 +100,9 @@ export const TicketsPage = () => {
       {/* Ticket List */}
       {isLoading ? (
         <LoadingSkeleton />
-      ) : data && data.data.length > 0 ? (
+      ) : filteredTickets.length > 0 ? (
         <div className="space-y-4">
-          {data.data.map((ticket) => (
+          {filteredTickets.map((ticket) => (
             <TicketCard key={ticket.id} ticket={ticket} />
           ))}
         </div>

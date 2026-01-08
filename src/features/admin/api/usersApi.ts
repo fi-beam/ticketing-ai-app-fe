@@ -3,11 +3,11 @@ import type { User, PaginatedResponse } from '@/types'
 
 export const usersApi = {
   getAll: async (page = 1, limit = 10) => {
-    const response = await apiClient.get<{ data: PaginatedResponse<User> }>(
+    const response = await apiClient.get<PaginatedResponse<User>>(
       '/users',
       { params: { page, limit } }
     )
-    return extractData(response)
+    return response.data
   },
 
   updateRole: async (id: string, role: 'admin' | 'agent' | 'user') => {

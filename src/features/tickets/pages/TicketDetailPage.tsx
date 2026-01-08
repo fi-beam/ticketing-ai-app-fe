@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Clock, User, Tag } from 'lucide-react'
+import { ArrowLeft, Clock, User, Tag, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -7,12 +7,16 @@ import { Select } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { ROUTES, STATUS_COLORS, PRIORITY_COLORS } from '@/lib/constants'
 import { useTicketDetail, useTicketActivities } from '../hooks/useTicketDetail'
+import { useUpdateTicket } from '../hooks/useUpdateTicket'
+import { useAddComment } from '../hooks/useAddComment'
+import { useAssignTicket } from '../hooks/useAssignTicket'
 import { AISuggestionPanel } from '@/features/ai/components/AISuggestionPanel'
 import { formatRelativeTime } from '@/lib/utils'
 import { useAuth } from '@/features/auth/hooks'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
+import type { TicketStatus, TicketPriority } from '@/types'
 
 export const TicketDetailPage = () => {
   const { id } = useParams<{ id: string }>()
@@ -22,8 +26,35 @@ export const TicketDetailPage = () => {
 
   const { data: ticket, isLoading } = useTicketDetail(id!)
   const { data: activities = [] } = useTicketActivities(id!)
+  const { mutate: updateTicket, isPending: isUpdating } = useUpdateTicket(id!)
+  const { mutate: addComment, isPending: isAddingComment } = useAddComment(id!)
+  const { mutate: assignTicket, isPending: isAssigning } = useAssignTicket(id!)
 
   const isAgent = hasRole(['admin', 'agent'])
+
+  const handleStatusChange = (status: TicketStatus) => {
+    updateTicket({ status })
+  }
+
+  const handlePriorityChange = (priority: TicketPriority) => {
+    updateTicket({ priority })
+  }
+
+  const handleAssignChange = (assignedAgentId: string) => {
+    if (assignedAgentId) {
+      assignTicket(assignedAgentId)
+    }
+  }
+
+  const handleAddComment = () => {
+    if (comment.trim()) {
+      addComment(comment, {
+        onSuccess: () => {
+          setComment('')
+        },
+      })
+    }
+  }
 
   if (isLoading) {
     return (
@@ -153,8 +184,15 @@ export const TicketDetailPage = () => {
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   rows={3}
+                  disabled={isAddingComment}
                 />
-                <Button disabled={!comment.trim()}>Add Comment</Button>
+                <Button
+                  onClick={handleAddComment}
+                  disabled={!comment.trim() || isAddingComment}
+                >
+                  {isAddingComment && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {isAddingComment ? 'Adding...' : 'Add Comment'}
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -171,7 +209,11 @@ export const TicketDetailPage = () => {
               <CardContent className="space-y-3">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Status</label>
-                  <Select value={ticket.status}>
+                  <Select
+                    value={ticket.status}
+                    onChange={(e) => handleStatusChange(e.target.value as TicketStatus)}
+                    disabled={isUpdating}
+                  >
                     <option value="open">Open</option>
                     <option value="in_progress">In Progress</option>
                     <option value="resolved">Resolved</option>
@@ -180,7 +222,11 @@ export const TicketDetailPage = () => {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Priority</label>
-                  <Select value={ticket.priority}>
+                  <Select
+                    value={ticket.priority}
+                    onChange={(e) => handlePriorityChange(e.target.value as TicketPriority)}
+                    disabled={isUpdating}
+                  >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
                     <option value="high">High</option>
@@ -189,7 +235,11 @@ export const TicketDetailPage = () => {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Assign to</label>
-                  <Select defaultValue="">
+                  <Select
+                    value={ticket.assignedTo || ''}
+                    onChange={(e) => handleAssignChange(e.target.value)}
+                    disabled={isAssigning}
+                  >
                     <option value="">Unassigned</option>
                     <option value="agent1">Agent Smith</option>
                     <option value="agent2">Agent Johnson</option>

@@ -10,11 +10,26 @@ import type {
 
 export const ticketsApi = {
   getAll: async (filters: TicketFilters): Promise<PaginatedResponse<Ticket>> => {
-    const response = await apiClient.get<{ data: PaginatedResponse<Ticket> }>(
+    const cleanFilters: Record<string, string | number | undefined> = {}
+
+    if (filters.status && filters.status !== 'all') {
+      cleanFilters.status = filters.status
+    }
+
+    if (filters.priority && filters.priority !== 'all') {
+      cleanFilters.priority = filters.priority
+    }
+
+    if (filters.page) cleanFilters.page = filters.page
+    if (filters.limit) cleanFilters.limit = filters.limit
+    if (filters.sortBy) cleanFilters.sortBy = filters.sortBy
+    if (filters.sortOrder) cleanFilters.order = filters.sortOrder
+
+    const response = await apiClient.get<PaginatedResponse<Ticket>>(
       '/tickets',
-      { params: filters }
+      { params: cleanFilters }
     )
-    return extractData<PaginatedResponse<Ticket>>(response)
+    return response.data
   },
 
   getById: async (id: string): Promise<Ticket> => {

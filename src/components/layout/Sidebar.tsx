@@ -129,7 +129,7 @@ export const Sidebar = () => {
           {/* Footer */}
           <div className="border-t p-4">
             <p className="text-xs text-muted-foreground">
-              v1.0.0 • TicketFlow AI
+              v0.0.1 • TicketFlow AI
             </p>
           </div>
         </div>

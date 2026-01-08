@@ -3,11 +3,11 @@ import type { ActivityLog, PaginatedResponse } from '@/types'
 
 export const logsApi = {
   getAll: async (page = 1, limit = 10) => {
-    const response = await apiClient.get<{ data: PaginatedResponse<ActivityLog> }>(
+    const response = await apiClient.get<PaginatedResponse<ActivityLog>>(
       '/logs',
       { params: { page, limit } }
     )
-    return extractData(response)
+    return response.data
   },
 
   getStats: async () => {

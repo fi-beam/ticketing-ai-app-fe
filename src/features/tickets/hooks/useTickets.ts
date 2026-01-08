@@ -5,7 +5,7 @@ import { ticketsApi } from '../api/ticketsApi'
 
 export const useTickets = (filters?: TicketFilters) => {
   return useQuery({
-    queryKey: queryKeys.tickets.all(filters as any),
+    queryKey: queryKeys.tickets.all(filters as Record<string, unknown>),
     queryFn: () => ticketsApi.getAll(filters || {}),
   })
 }
