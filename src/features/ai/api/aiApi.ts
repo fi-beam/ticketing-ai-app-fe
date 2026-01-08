@@ -1,40 +1,31 @@
-import { apiClient, extractData } from '@/lib/api'
-import type { AISuggestion, GenerateAISuggestionRequest, UpdateAISuggestionRequest } from '@/types'
+import { apiClient } from '@/lib/api'
+import type { AISuggestion } from '@/types'
 
 export const aiApi = {
-  generateSuggestion: async (data: GenerateAISuggestionRequest) => {
-    const response = await apiClient.post<{ data: AISuggestion }>(
-      '/ai/suggestions',
-      data
+  generateSuggestion: async (ticketId: string, context?: string) => {
+    const response = await apiClient.post<{ suggestion: string; confidence: number; generatedAt: string }>(
+      '/ai/suggest-response',
+      { ticketId, context }
     )
-    return extractData(response)
+    return response.data
   },
 
   getSuggestions: async (ticketId: string) => {
-    const response = await apiClient.get<{ data: AISuggestion[] }>(
-      `/ai/suggestions/${ticketId}`
+    const response = await apiClient.get<AISuggestion[]>(
+      `/ai/responses/${ticketId}`
     )
-    return extractData(response)
+    return response.data
   },
 
-  updateSuggestion: async (id: string, data: UpdateAISuggestionRequest) => {
-    const response = await apiClient.patch<{ data: AISuggestion }>(
-      `/ai/suggestions/${id}`,
-      data
+  approveSuggestion: async (id: string, status: 'approved' | 'rejected') => {
+    const response = await apiClient.patch<AISuggestion>(
+      `/ai/responses/${id}/approve`,
+      { status }
     )
-    return extractData(response)
-  },
-
-  approveSuggestion: async (id: string, editedContent?: string) => {
-    return aiApi.updateSuggestion(id, {
-      status: 'approved',
-      editedContent,
-    })
+    return response.data
   },
 
   rejectSuggestion: async (id: string) => {
-    return aiApi.updateSuggestion(id, {
-      status: 'rejected',
-    })
+    return aiApi.approveSuggestion(id, 'rejected')
   },
 }

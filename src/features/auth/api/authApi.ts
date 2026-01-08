@@ -17,7 +17,7 @@ export const authApi = {
   },
 
   getMe: async () => {
-    const response = await apiClient.get<{ data: AuthResponse['user'] }>('/auth/me')
+    const response = await apiClient.get<{ data: AuthResponse['user'] }>('/users/me')
     return extractData(response)
   },
 }
