@@ -13,7 +13,6 @@ import { ROUTES } from '@/lib/constants'
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
-  rememberMe: z.boolean().optional(),
 })
 
 type LoginFormData = z.infer<typeof loginSchema>
@@ -28,9 +27,6 @@ export const LoginForm = () => {
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      rememberMe: false,
-    },
   })
 
   const onSubmit = (data: LoginFormData) => {
@@ -81,18 +77,6 @@ export const LoginForm = () => {
       </div>
 
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <input
-            id="rememberMe"
-            type="checkbox"
-            {...register('rememberMe')}
-            className="h-4 w-4 rounded border-gray-300"
-            disabled={isPending}
-          />
-          <Label htmlFor="rememberMe" className="text-sm font-normal">
-            Remember me
-          </Label>
-        </div>
         <Link
           to="#"
           className="text-sm text-primary hover:underline"

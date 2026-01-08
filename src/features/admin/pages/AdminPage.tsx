@@ -72,11 +72,11 @@ const mockLogs = [
 ]
 
 const actionTypeColors = {
-  authentication: 'bg-blue-100 text-blue-800',
-  tickets: 'bg-green-100 text-green-800',
-  ai: 'bg-purple-100 text-purple-800',
-  users: 'bg-orange-100 text-orange-800',
-  other: 'bg-gray-100 text-gray-800',
+  authentication: 'bg-blue-100 text-blue-900 dark:bg-blue-900/30 dark:text-blue-200',
+  tickets: 'bg-green-100 text-green-900 dark:bg-green-900/30 dark:text-green-200',
+  ai: 'bg-purple-100 text-purple-900 dark:bg-purple-900/30 dark:text-purple-200',
+  users: 'bg-orange-100 text-orange-900 dark:bg-orange-900/30 dark:text-orange-200',
+  other: 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-200',
 }
 
 export const AdminPage = () => {
@@ -207,8 +207,8 @@ export const AdminPage = () => {
                             variant="outline"
                             className={
                               user.status === 'active'
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-gray-100 text-gray-800'
+                                ? 'bg-green-100 text-green-900 dark:bg-green-900/30 dark:text-green-200 dark:border-green-700'
+                                : 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600'
                             }
                           >
                             {user.status}
@@ -349,7 +349,7 @@ export const AdminPage = () => {
               <div className="pt-4 border-t space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">API Status</span>
-                  <Badge className="bg-green-600">Connected</Badge>
+                  <Badge className="bg-green-600 text-white dark:bg-green-700 dark:text-white border-0">Connected</Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Usage Today</span>

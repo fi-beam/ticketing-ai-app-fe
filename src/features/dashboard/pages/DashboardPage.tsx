@@ -87,7 +87,7 @@ export const DashboardPage = () => {
             value={metrics?.aiSuggestionsGenerated || 0}
             icon={Sparkles}
             description="Generated this month"
-            className="ai-gradient"
+            className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5"
           />
         </div>
       )}

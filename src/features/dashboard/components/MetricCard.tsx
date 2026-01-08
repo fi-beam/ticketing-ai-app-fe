@@ -33,8 +33,10 @@ export const MetricCard = ({
         {trend && (
           <p
             className={cn(
-              'text-xs',
-              trend.isPositive ? 'text-green-600' : 'text-red-600'
+              'text-xs font-medium',
+              trend.isPositive
+                ? 'text-green-700 dark:text-green-400'
+                : 'text-red-700 dark:text-red-400'
             )}
           >
             {trend.isPositive ? '+' : ''}

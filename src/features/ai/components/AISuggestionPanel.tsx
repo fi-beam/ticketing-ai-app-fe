@@ -147,7 +147,7 @@ export const AISuggestionPanel = ({ ticketId, ticketStatus }: AISuggestionPanelP
                   <Button
                     onClick={handleApprove}
                     disabled={isApproving}
-                    className="bg-green-600 hover:bg-green-700 text-white"
+                    className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 text-white border-0"
                   >
                     {isApproving ? (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
